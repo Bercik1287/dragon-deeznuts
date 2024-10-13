@@ -162,5 +162,37 @@ public:
 
 int main() {
     
+    ListaDwukierunkowa lista;
+
+        lista.dodajZPrzodu(10);
+        lista.dodajZPrzodu(20);
+        lista.dodajZTylu(30);
+        lista.dodajDoIndeksu(1, 25);
+  
+        cout << "Lista: ";
+        lista.wyswietl();
+    
+        cout << "Lista w odwrotnej kolejnosci: ";
+        lista.wyswietlOdwrotnie();
+    
+        lista.usunZPrzodu();
+        lista.usunZTylu();
+    
+        cout << "Lista po usunieciu: ";
+        lista.wyswietl();
+    
+        lista.usunZIndeksu(1);
+    
+        cout << "Lista po usunieciu elementu z indeksem 1: ";
+        lista.wyswietl();
+    
+        Wezel* przod = list.znajdzprzod();
+        lista.wyswietlNastepny(przod);
+        lista.wyswietlPoprzedni(przod);
+    
+        list.clear();
+        cout << "Lista po wyczyszczeniu: ";
+        lista.wyswietl();
+
     return 0;
 }
