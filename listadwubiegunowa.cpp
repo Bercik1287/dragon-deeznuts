@@ -112,7 +112,53 @@ public:
         
         delete obecny;
     }
-}
+
+    void wyswietl() {
+        Wezel* obecny = przod;
+        while (obecny) {
+            cout << obecny->dane << " ";
+            obecny = obecny->nastepny;
+        }
+        cout << endl;
+    }
+
+    void wyswietlOdwrotnie() {
+        Wezel* obecny = tyl;
+        while (obecny) {
+            cout << obecny->dane << " ";
+            obecny = obecny->poprzedni;
+        }
+        cout << endl;
+    }
+
+    void wyswietlNastepny(Wezel* Wezel) {
+        if (Wezel && Wezel->nastepny) {
+            cout << "Następny element: " << Wezel->nastepny->dane << endl;
+        } else {
+            cout << "Brak następnego elementu." << endl;
+        }
+    }
+
+    void wyswietlPoprzedni(Wezel* Wezel) {
+        if (Wezel && Wezel->poprzedni) {
+            cout << "Poprzedni element: " << Wezel->poprzedni->dane << endl;
+        } else {
+            cout << "Brak poprzedniego elementu." << endl;
+        }
+    }
+
+    void clear() {
+        while (przod) {
+            usunZPrzodu();
+        }
+    }
+    Wezel* znajdzprzod() {
+        return przod;
+    }
+    Wezel* znajdztyl() {
+        return tyl;
+    }
+};
 
 int main() {
     
