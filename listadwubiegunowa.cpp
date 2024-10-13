@@ -29,7 +29,7 @@ public:
         }
     }
 
-void dodajZTylu(int wartosc) {
+    void dodajZTylu(int wartosc) {
         Wezel* Wezel2 = new Wezel(wartosc);
         if (!tyl) {
             przod = tyl = Wezel2;
@@ -40,7 +40,7 @@ void dodajZTylu(int wartosc) {
         }
     }
 
-void dodajDoIndeksu(int indeks, int wartosc) {
+    void dodajDoIndeksu(int indeks, int wartosc) {
         if (indeks == 0) {
             dodajZPrzodu(wartosc);
             return;
@@ -62,6 +62,55 @@ void dodajDoIndeksu(int indeks, int wartosc) {
             }
             obecny->poprzedni = Wezel2;
         }
+    }
+
+    void usunZPrzodu() {
+        if (!przod) return;
+        
+        Wezel* temp = przod;
+        if (przod == tyl) {
+            przod = tyl = nullptr;
+        } else {
+            przod = przod->nastepny;
+            przod->poprzedni = nullptr;
+        }
+        delete temp;
+    }
+    void usunZTylu() {
+        if (!tyl) return;
+        
+        Wezel* temp = tyl;
+        if (przod == tyl) {
+            przod = tyl = nullptr;
+        } else {
+            tyl = tyl->poprzedni;
+            tyl->nastepny = nullptr;
+        }
+        delete temp;
+    }
+    void usunZIndeksu(int indeks) {
+        if (indeks == 0) {
+            usunZPrzodu();
+            return;
+        }
+        
+        Wezel* obecny = przod;
+        int obecnyIndeks = 0;
+        
+        while (obecny && obecnyIndeks < indeks) {
+            obecny = obecny->nastepny;
+            obecnyIndeks++;
+        }
+        
+        if (!obecny) return;
+        
+        if (obecny->poprzedni) obecny->poprzedni->nastepny = obecny->nastepny;
+        if (obecny->nastepny) obecny->nastepny->poprzedni = obecny->poprzedni;
+        
+        if (obecny == przod) przod = obecny->nastepny;
+        if (obecny == tyl) tyl = obecny->poprzedni;
+        
+        delete obecny;
     }
 }
 
