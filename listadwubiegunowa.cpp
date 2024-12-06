@@ -1,5 +1,4 @@
 #include <iostream>
-
 using namespace std;
 
 struct Wezel {
@@ -10,189 +9,208 @@ struct Wezel {
     Wezel(int wartosc) : dane(wartosc), poprzedni(nullptr), nastepny(nullptr) {}
 };
 
-class ListaDwukierunkowa {
+
+        class ListaDwukierunkowa{
 private:
-    Wezel* przod;
-    Wezel* tyl;
+    Wezel* pierwszy;
+    Wezel* ostatni;
     
 public:
-    ListaDwukierunkowa() : przod(nullptr), tyl(nullptr) {}
+    ListaDwukierunkowa() : pierwszy(nullptr), ostatni(nullptr) {}
     
-    void dodajZPrzodu(int wartosc) {
-        Wezel* Wezel2 = new Wezel(wartosc);
-        if (!przod) {
-            przod = tyl = Wezel2;
-        } else {
-            Wezel2->nastepny = przod;
-            przod->poprzedni = Wezel2;
-            przod = Wezel2;
-        }
+    ~ListaDwukierunkowa() {
+        wyczysc();
     }
 
-    void dodajZTylu(int wartosc) {
-        Wezel* Wezel2 = new Wezel(wartosc);
-        if (!tyl) {
-            przod = tyl = Wezel2;
+    void dodajNaPoczatek(int wartosc) {
+        Wezel* nowyWezel = new Wezel(wartosc);
+        if (!pierwszy) {
+            pierwszy = ostatni = nowyWezel;
         } else {
-            Wezel2->poprzedni = tyl;
-            tyl->nastepny = Wezel2;
-            tyl = Wezel2;
+            nowyWezel->nastepny = pierwszy;
+            pierwszy->poprzedni = nowyWezel;
+            pierwszy = nowyWezel;
         }
     }
-
-    void dodajDoIndeksu(int indeks, int wartosc) {
+    
+    void dodajNaKoniec(int wartosc) {
+        Wezel* nowyWezel = new Wezel(wartosc);
+        if (!ostatni) {
+            pierwszy = ostatni = nowyWezel;
+        } else {
+            nowyWezel->poprzedni = ostatni;
+            ostatni->nastepny = nowyWezel;
+            ostatni = nowyWezel;
+        }
+    }
+ 
+    void dodajPodIndeksem(int indeks, int wartosc) {
         if (indeks == 0) {
-            dodajZPrzodu(wartosc);
+            dodajNaPoczatek(wartosc);
             return;
         }
-        Wezel* obecny = przod;
-        int obecnyIndeks = 0;
-        while (obecny && obecnyIndeks < indeks) {
-            obecny = obecny->nastepny;
-            obecnyIndeks++;
+        
+        Wezel* aktualny = pierwszy;
+        int aktualnyIndeks = 0;
+        while (aktualny && aktualnyIndeks < indeks) {
+            aktualny = aktualny->nastepny;
+            aktualnyIndeks++;
         }
-        if (!obecny) {
-            dodajZTylu(wartosc);
+        if (!aktualny) {
+            dodajNaKoniec(wartosc);
         } else {
-            Wezel* Wezel2 = new Wezel(wartosc);
-            Wezel2->poprzedni = obecny->poprzedni;
-            Wezel2->nastepny = obecny;
-            if (obecny->poprzedni) {
-                obecny->poprzedni->nastepny = Wezel2;
+            Wezel* nowyWezel = new Wezel(wartosc);
+            nowyWezel->poprzedni = aktualny->poprzedni;
+            nowyWezel->nastepny = aktualny;
+            if (aktualny->poprzedni) {
+                aktualny->poprzedni->nastepny = nowyWezel;
             }
-            obecny->poprzedni = Wezel2;
+            aktualny->poprzedni = nowyWezel;
+            if (aktualny == pierwszy) pierwszy = nowyWezel; 
         }
     }
 
-    void usunZPrzodu() {
-        if (!przod) return;
+    void usunZPoczatku() {
+        if (!pierwszy) return;
         
-        Wezel* temp = przod;
-        if (przod == tyl) {
-            przod = tyl = nullptr;
+        Wezel* temp = pierwszy;
+        if (pierwszy == ostatni) {
+            pierwszy = ostatni = nullptr;
         } else {
-            przod = przod->nastepny;
-            przod->poprzedni = nullptr;
+            pierwszy = pierwszy->nastepny;
+            pierwszy->poprzedni = nullptr;
         }
         delete temp;
     }
-    void usunZTylu() {
-        if (!tyl) return;
+
+    void usunZKonca() {
+        if (!ostatni) return;
         
-        Wezel* temp = tyl;
-        if (przod == tyl) {
-            przod = tyl = nullptr;
+        Wezel* temp = ostatni;
+        if (pierwszy == ostatni) {
+            pierwszy = ostatni = nullptr;
         } else {
-            tyl = tyl->poprzedni;
-            tyl->nastepny = nullptr;
+            ostatni = ostatni->poprzedni;
+            ostatni->nastepny = nullptr;
         }
         delete temp;
     }
-    void usunZIndeksu(int indeks) {
+
+    void usunPodIndeksem(int indeks) {
         if (indeks == 0) {
-            usunZPrzodu();
+            usunZPoczatku();
             return;
         }
         
-        Wezel* obecny = przod;
-        int obecnyIndeks = 0;
+        Wezel* aktualny = pierwszy;
+        int aktualnyIndeks = 0;
         
-        while (obecny && obecnyIndeks < indeks) {
-            obecny = obecny->nastepny;
-            obecnyIndeks++;
+        while (aktualny && aktualnyIndeks < indeks) {
+            aktualny = aktualny->nastepny;
+            aktualnyIndeks++;
         }
         
-        if (!obecny) return;
+        if (!aktualny) return;  // Index out of bounds
         
-        if (obecny->poprzedni) obecny->poprzedni->nastepny = obecny->nastepny;
-        if (obecny->nastepny) obecny->nastepny->poprzedni = obecny->poprzedni;
+        if (aktualny->poprzedni) aktualny->poprzedni->nastepny = aktualny->nastepny;
+        if (aktualny->nastepny) aktualny->nastepny->poprzedni = aktualny->poprzedni;
         
-        if (obecny == przod) przod = obecny->nastepny;
-        if (obecny == tyl) tyl = obecny->poprzedni;
+        if (aktualny == pierwszy) pierwszy = aktualny->nastepny;
+        if (aktualny == ostatni) ostatni = aktualny->poprzedni;
         
-        delete obecny;
+        delete aktualny;
     }
 
     void wyswietl() {
-        Wezel* obecny = przod;
-        while (obecny) {
-            cout << obecny->dane << " ";
-            obecny = obecny->nastepny;
+        if (!pierwszy) {
+            cout << "Lista jest pusta." << endl;
+            return;
+        }
+        Wezel* aktualny = pierwszy;
+        while (aktualny) {
+            cout << aktualny->dane << " ";
+            aktualny = aktualny->nastepny;
         }
         cout << endl;
     }
 
-    void wyswietlOdwrotnie() {
-        Wezel* obecny = tyl;
-        while (obecny) {
-            cout << obecny->dane << " ";
-            obecny = obecny->poprzedni;
+    void wyswietlOdTylu() {
+        if (!ostatni) {
+            cout << "Lista jest pusta." << endl;
+            return;
+        }
+        Wezel* aktualny = ostatni;
+        while (aktualny) {
+            cout << aktualny->dane << " ";
+            aktualny = aktualny->poprzedni;
         }
         cout << endl;
     }
 
-    void wyswietlNastepny(Wezel* Wezel) {
-        if (Wezel && Wezel->nastepny) {
-            cout << "Następny element: " << Wezel->nastepny->dane << endl;
+    void wyswietlNastepny(Wezel* wezel) {
+        if (wezel && wezel->nastepny) {
+            cout << "Nastepny element: " << wezel->nastepny->dane << endl;
         } else {
-            cout << "Brak następnego elementu." << endl;
+            cout << "Brak nastepnego elementu." << endl;
         }
     }
 
-    void wyswietlPoprzedni(Wezel* Wezel) {
-        if (Wezel && Wezel->poprzedni) {
-            cout << "Poprzedni element: " << Wezel->poprzedni->dane << endl;
+    void wyswietlPoprzedni(Wezel* wezel) {
+        if (wezel && wezel->poprzedni) {
+            cout << "Poprzedni element: " << wezel->poprzedni->dane << endl;
         } else {
             cout << "Brak poprzedniego elementu." << endl;
         }
     }
 
-    void clear() {
-        while (przod) {
-            usunZPrzodu();
+    void wyczysc() {
+        while (pierwszy) {
+            usunZPoczatku();
         }
     }
-    Wezel* znajdzprzod() {
-        return przod;
+    
+    Wezel* pobierzPierwszy() {
+        return pierwszy;
     }
-    Wezel* znajdztyl() {
-        return tyl;
+    
+    Wezel* pobierzOstatni() {
+        return ostatni;
     }
 };
 
 int main() {
-    
     ListaDwukierunkowa lista;
 
-        lista.dodajZPrzodu(10);
-        lista.dodajZPrzodu(20);
-        lista.dodajZTylu(30);
-        lista.dodajDoIndeksu(1, 25);
+    lista.dodajNaPoczatek(10);
+    lista.dodajNaPoczatek(20);
+    lista.dodajNaKoniec(30);
+    lista.dodajPodIndeksem(1, 25);
   
-        cout << "Lista: ";
-        lista.wyswietl();
+    cout << "Lista: ";
+    lista.wyswietl();
     
-        cout << "Lista w odwrotnej kolejnosci: ";
-        lista.wyswietlOdwrotnie();
+    cout << "Lista w odwrotnej kolejnosci: ";
+    lista.wyswietlOdTylu();
     
-        lista.usunZPrzodu();
-        lista.usunZTylu();
+    lista.usunZPoczatku();
+    lista.usunZKonca();
     
-        cout << "Lista po usunieciu: ";
-        lista.wyswietl();
+    cout << "Lista po usunieciach: ";
+    lista.wyswietl();
     
-        lista.usunZIndeksu(1);
+    lista.usunPodIndeksem(1);
     
-        cout << "Lista po usunieciu elementu z indeksem 1: ";
-        lista.wyswietl();
+    cout << "Lista po usunieciu elementu pod indeksem 1: ";
+    lista.wyswietl();
     
-        Wezel* przod = list.znajdzprzod();
-        lista.wyswietlNastepny(przod);
-        lista.wyswietlPoprzedni(przod);
+    Wezel* pierwszyElement = lista.pobierzPierwszy();
+    Wezel* ostatniElement = lista.pobierzOstatni();
+    lista.wyswietlNastepny(pierwszyElement);
+    lista.wyswietlPoprzedni(ostatniElement);
     
-        list.clear();
-        cout << "Lista po wyczyszczeniu: ";
-        lista.wyswietl();
-
+    lista.wyczysc();
+    cout << "Lista po wyczyszczeniu: ";
+    lista.wyswietl();
+    
     return 0;
 }
